@@ -1,7 +1,11 @@
-const BASE_URL = "https://latest.currency-api.pages.dev/v1/currencies/eur.json";
+const BASE_URL = "https://latest.currency-api.pages.dev/v1/currencies";
 
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector("form button");
+const fromSelect = document.getElementById("from-currency");
+const toSelect = document.getElementById("to-currency");
+const amountInput = document.getElementById("amount");
+const msg = document.querySelector(".msg");
 
 for (const select of dropdowns) {
     for (const currencyCode in countryList) {
@@ -29,12 +33,29 @@ const updateFlag = (element) => {
     img.src = newSrc;
 };
 
-btn.addEventListener("click", (e) => {
+btn.addEventListener("click", async (e) => {
     e.preventDefault();
-    let amount = document.getElementById(".amount input").value;
-    let amtVal =amount.value.trim();
-    if (amtVal === "" || amtVal < 1) {
+    const fromCurrency = fromSelect.value;
+    const toCurrency = toSelect.value;
+    let amtVal = amountInput.value.trim();
+    if (amtVal === "" || Number(amtVal) < 1) {
        amtVal = 1;
-       amt.value = 1;
+       amountInput.value = 1;
+    }
+
+    try {
+        const URL = `${BASE_URL}/${fromCurrency.toLowerCase()}.json`;
+        const response = await fetch(URL);
+        if (!response.ok) {
+            throw new Error("Unable to fetch exchange rate");
+        }
+
+        const data = await response.json();
+        const rate = data[fromCurrency.toLowerCase()][toCurrency.toLowerCase()];
+        const totalExchanged = (rate * Number(amtVal)).toFixed(2);
+        msg.innerText = `Exchange Rate: 1 ${fromCurrency} = ${rate} ${toCurrency}`;
+        msg.innerText += `\nTotal Exchanged: ${totalExchanged} ${toCurrency}`;
+    } catch (error) {
+        msg.innerText = "Could not load the exchange rate. Please try again.";
     }
 });
