@@ -6,6 +6,7 @@ const fromSelect = document.getElementById("from-currency");
 const toSelect = document.getElementById("to-currency");
 const amountInput = document.getElementById("amount");
 const msg = document.querySelector(".msg");
+const swapButton = document.querySelector(".fa-arrow-right-arrow-left");
 
 for (const select of dropdowns) {
     for (const currencyCode in countryList) {
@@ -32,6 +33,21 @@ const updateFlag = (element) => {
     let img = element.parentElement.querySelector("img");
     img.src = newSrc;
 };
+
+swapButton.addEventListener("click", () => {
+    const currentFrom = fromSelect.value;
+    fromSelect.value = toSelect.value;
+    toSelect.value = currentFrom;
+    updateFlag(fromSelect);
+    updateFlag(toSelect);
+});
+
+swapButton.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        swapButton.click();
+    }
+});
 
 btn.addEventListener("click", async (e) => {
     e.preventDefault();
