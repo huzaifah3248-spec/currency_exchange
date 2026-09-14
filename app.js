@@ -26,10 +26,11 @@ for (const select of dropdowns) {
         updateFlag(e.target);});
 }
 
-const updateFlag = (element) => {
+const updateFlag = async (element) => {
     let currencyCode = element.value;
     let countryCode = countryList[currencyCode];
-    let newSrc = `https://flagsapi.com/${countryCode}/flat/64.png`;
+    let response = await fetch(`https://flagsapi.com/${countryCode}/flat/64.png`);
+    let newSrc = response.url;
     let img = element.parentElement.querySelector("img");
     img.src = newSrc;
 };
@@ -75,3 +76,4 @@ btn.addEventListener("click", async (e) => {
         msg.innerText = "Could not load the exchange rate. Please try again.";
     }
 });
+
